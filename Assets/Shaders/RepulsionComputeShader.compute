@@ -1,0 +1,57 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSRepulsion
+
+float deltaTime;
+float repulsion;
+
+struct ContactStruct
+{
+	float3 position;
+	float3 velocity;
+};
+
+RWStructuredBuffer<ContactStruct> bufContacts;
+
+[numthreads(128, 1, 1)]
+void CSRepulsion(uint3 id : SV_DispatchThreadID)
+{
+	uint i = id.x; // Current node index
+
+	uint numContacts, stride;
+	bufContacts.GetDimensions(numContacts, stride); // Save total number of nodes in numContacts. Stride can be ignored.
+
+	float3 position = bufContacts[i].position;
+	float3 velocity = bufContacts[i].velocity;
+
+	float3 updatedPosition = float3(0, 0, 0);
+	float3 updatedDirection = float3(0, 0, 0);
+	float updatedDistance = 0.0f;
+
+	[loop]
+	for (uint j = 0; j < numContacts; j++)
+	{
+		if (i != j)
+		{
+			float3 direction = bufContacts[j].position - bufContacts[i].position;
+			float distance = max(length(direction), 0.01f);
+			float force = -repulsion * repulsion / (distance);
+			velocity += min(force, 2.0f) * normalize(direction);
+		}
+	}
+
+	updatedPosition = velocity * deltaTime * deltaTime;
+	updatedDirection = updatedPosition - position;
+	updatedDistance = max(length(updatedDirection), 0.01f);
+
+	if (i < numContacts)
+	{
+		bufContacts[i].velocity = velocity;
+		bufContacts[i].position = updatedPosition;
+
+		// Limit exploding forces
+		if (updatedDistance > 5.0f)
+		{
+			bufContacts[i].position = updatedPosition * 0.2f;
+		}
+	}
+}

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f33ac070338325c4f931de0e9133787c
+timeCreated: 1476635439
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - TestCube: {fileID: 1000013496711604, guid: fba8c8bebadcc4b49b66cc15f0e12805, type: 2}
+  - hudContacts: {fileID: 1000011557948998, guid: 780a729d5d2a7ee469c148240a7afb4e,
+      type: 2}
+  - hudMails: {fileID: 1000014231930812, guid: 59cb12cb521947644b8cfa8fb87b0a0d, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
